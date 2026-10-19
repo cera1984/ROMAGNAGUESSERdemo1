@@ -76,9 +76,13 @@ async function ensureMap() {
   if (state.map) return;
   L = await obtainLeaflet();
   state.map = L.map('guessMap', { zoomControl: false, attributionControl: true, minZoom: 8, maxZoom: 19 }).setView([CESENA.lat, CESENA.lng], 11);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    maxZoom: 19, subdomains:'abcd'
+  // OpenStreetMap standard raster tiles do not require a CARTO API key.
+  // Small personal projects may use the public tile service under OSM's usage policy.
+  // Do not bulk-download or prefetch map tiles; show attribution at all times.
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>',
+    maxZoom: 19,
+    maxNativeZoom: 19
   }).addTo(state.map);
   L.control.zoom({ position: 'bottomleft' }).addTo(state.map);
   state.map.on('click', e => {

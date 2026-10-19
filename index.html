@@ -14,12 +14,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=osm-tiles-2" />
   <title>ROMAGNAGUESSER — La Romagna da indovinare</title>
   <!-- Keep the exact Leaflet instance before any other map viewer can alter globals. -->
   <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" onload="window.ROMAGNAGUESSER_LEAFLET = window.L"></script>
   <!-- Panoramax and Mapillary are loaded only when a round needs them. -->
-  <script type="module" src="app.mjs?v=map-fix-1"></script>
+  <script type="module" src="app.mjs?v=osm-tiles-2"></script>
 </head>
 <body>
   <div class="app">
@@ -70,7 +70,7 @@
       </section>
       <section id="summaryScreen" class="summary-screen" hidden><div class="summary-content"><div class="eyebrow">PARTITA COMPLETATA · ROMAGNAGUESSER</div><div class="summary-icon"><img src="icon.svg" alt="" /></div><h1>NON MALE,<br /><span>ROMAGNOLO.</span></h1><div id="summaryTotal" class="summary-total">0</div><div id="summaryMax" class="summary-maximum">PUNTI SU 25.000</div><p id="summaryDetails">Hai completato la tua partita.</p><div class="summary-actions"><button id="againBtn" class="primary-button">GIOCA ANCORA <span>→</span></button><button id="shareScoreBtn" class="secondary-button">↗ CONDIVIDI PUNTEGGIO</button></div></div></section>
     </main>
-    <footer class="site-footer"><span>ROMAGNAGUESSER · UN PROGETTO OPEN SOURCE</span><span>IMMAGINI DI TERZE PARTI · MAPPA © OSM / CARTO</span></footer>
+    <footer class="site-footer"><span>ROMAGNAGUESSER · UN PROGETTO OPEN SOURCE</span><span>IMMAGINI DI TERZE PARTI · MAPPA © OPENSTREETMAP</span></footer>
   </div>
   <dialog id="settingsDialog" class="settings-dialog"><form method="dialog"><div class="settings-title"><h2>Impostazioni</h2><button aria-label="Chiudi" class="icon-button">×</button></div><label for="mapillaryToken">Client access token Mapillary</label><input id="mapillaryToken" type="password" autocomplete="off" placeholder="Incolla il tuo token" /><p>Serve soltanto per usare Mapillary. Viene salvato esclusivamente nel browser di questo dispositivo; non inserirlo nella URL. Usa un token pubblico previsto per applicazioni client e leggi le condizioni di Mapillary.</p><label class="check-line"><input id="moveAllowed" type="checkbox" checked /> <span>Consenti movimento tra le fotografie</span></label><button id="saveSettings" type="button" class="primary-button">SALVA IMPOSTAZIONI</button><a href="https://www.mapillary.com/dashboard/developers" target="_blank" rel="noopener noreferrer" class="settings-link">Come ottenere il token ↗</a></form></dialog>
 </body>

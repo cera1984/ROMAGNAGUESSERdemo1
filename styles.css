@@ -126,3 +126,9 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #f7d7
  .home-panel{padding:37px 23px}.stat-number{font-size:28px}.game-status strong{font-size:22px}.game-status-right strong{font-size:29px}
  .result-strip strong{font-size:22px}
 }
+
+/* ROMAGNAGUESSER 0.4 – dark appearance for the no-key OSM Standard raster basemap.
+   Filter tiles only: markers and attribution remain in their original colors. */
+#guessMap .leaflet-tile-pane .leaflet-tile {
+  filter: invert(0.89) hue-rotate(180deg) brightness(0.91) saturate(0.68) contrast(1.06);
+}
