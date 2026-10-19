@@ -1,6 +1,47 @@
 import { CESENA, PANORAMAX_API, haversineKm, scoreForDistance, createChallenge, readChallenge, formatDistance, deriveStats } from './core.mjs';
 import { discoverHybrid, discoverMapillary, fetchChallenge } from './providers.mjs';
 
+// Guard Leaflet against missing CDN files or another library replacing window.L.
+// The onload handler in index.html captures the instance before other viewers load.
+let L = null;
+const libraryLoads = new Map();
+function loadScript(url) {
+  if (libraryLoads.has(url)) return libraryLoads.get(url);
+  const loading = new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = url;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error(`Impossibile caricare la libreria: ${url.split('/')[2]}`));
+    document.head.append(script);
+  });
+  libraryLoads.set(url, loading);
+  return loading;
+}
+function validLeaflet(api) {
+  return !!api && typeof api.map === 'function' && typeof api.tileLayer === 'function' &&
+    typeof api.marker === 'function' && typeof api.control?.zoom === 'function';
+}
+async function obtainLeaflet() {
+  if (validLeaflet(window.ROMAGNAGUESSER_LEAFLET)) return window.ROMAGNAGUESSER_LEAFLET;
+  if (validLeaflet(window.L)) return window.L;
+  // CDN fallback: no third-party script can silently turn a broken global into a crash.
+  const mirrors = [
+    'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js',
+    'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
+  ];
+  for (const mirror of mirrors) {
+    try {
+      await loadScript(mirror);
+      if (validLeaflet(window.L)) {
+        window.ROMAGNAGUESSER_LEAFLET = window.L;
+        return window.L;
+      }
+    } catch (error) { console.warn('Tentativo Leaflet non riuscito:', error); }
+  }
+  throw new Error('Impossibile caricare la mappa Leaflet. Disattiva temporaneamente blocchi script/estensioni o riprova con un’altra rete.');
+}
+
 const $ = id => document.getElementById(id);
 const numberIt = n => Math.round(n).toLocaleString('it-IT');
 const STAT_KEY = 'romaguessr-stats-v1';
@@ -31,9 +72,9 @@ function changeRounds(value) {
   document.querySelectorAll('#roundOptions .segment').forEach(b => { const yes=b.dataset.rounds===value;b.classList.toggle('active', yes);b.setAttribute('aria-pressed',String(yes)); });
 }
 function getProvider() { return document.querySelector('input[name="provider"]:checked').value; }
-function ensureMap() {
+async function ensureMap() {
   if (state.map) return;
-  if (!window.L) throw new Error('La libreria cartografica non si è caricata: controlla la connessione a Internet.');
+  L = await obtainLeaflet();
   state.map = L.map('guessMap', { zoomControl: false, attributionControl: true, minZoom: 8, maxZoom: 19 }).setView([CESENA.lat, CESENA.lng], 11);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
@@ -81,7 +122,8 @@ async function startGame() {
     const positions = await findRounds();
     state.rounds = positions; state.index = 0; state.results = []; state.locked = false;
     state.count = state.challenge ? positions.length : state.selected === 'infinite' ? Infinity : Number(state.selected);
-    ensureMap(); selectScreen('game');
+    selectScreen('game'); // Leaflet must initialize in a visible container.
+    await ensureMap();
     await displayRound();
   } catch(err) {
     console.error('Avvio fallito:', err);
@@ -101,6 +143,9 @@ async function showPhoto(photo) {
   $('photoCredit').textContent = photo.credits;
   const holder = $('photoHolder');
   if (photo.provider === 'pnx') {
+    if (!customElements.get('pnx-photo-viewer')) {
+      await loadScript('https://cdn.jsdelivr.net/npm/@panoramax/web-viewer@5.2.0/build/cjs/index_photoviewer.js');
+    }
     await Promise.race([
       customElements.whenDefined('pnx-photo-viewer'),
       new Promise((_,reject) => setTimeout(() => reject(new Error('Visualizzatore Panoramax non caricato. Controlla la connessione.')), 12000))
@@ -123,6 +168,9 @@ async function showPhoto(photo) {
     img.addEventListener('error', () => { $('guessHelp').textContent = 'Fotografia non disponibile. Il link originale potrebbe essere cambiato.'; });
     holder.append(img);
   } else {
+    if (!window.mapillary?.Viewer) {
+      await loadScript('https://unpkg.com/mapillary-js@4.1.2/dist/mapillary.js');
+    }
     if (!window.mapillary?.Viewer) throw new Error('Visualizzatore Mapillary non caricato. Controlla la connessione.');
     const box = document.createElement('div'); box.id = 'mly'; holder.append(box);
     state.mapillaryViewer = new window.mapillary.Viewer({ accessToken:settings.mapillaryToken, container:'mly', imageId:photo.id });

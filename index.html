@@ -16,10 +16,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <title>ROMAGNAGUESSER — La Romagna da indovinare</title>
-  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script defer src="https://unpkg.com/mapillary-js@4.1.2/dist/mapillary.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/@panoramax/web-viewer@5.2.0/build/cjs/index_photoviewer.js"></script>
-  <script type="module" src="app.mjs"></script>
+  <!-- Keep the exact Leaflet instance before any other map viewer can alter globals. -->
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" onload="window.ROMAGNAGUESSER_LEAFLET = window.L"></script>
+  <!-- Panoramax and Mapillary are loaded only when a round needs them. -->
+  <script type="module" src="app.mjs?v=map-fix-1"></script>
 </head>
 <body>
   <div class="app">
