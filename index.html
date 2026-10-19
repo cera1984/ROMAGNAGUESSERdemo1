@@ -3,36 +3,39 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0b0e15" />
-  <meta name="description" content="ROMAGUESSR: esplora Cesena e dintorni, indovina il posto e sfida gli amici. Gioco geografico open source." />
-  <link rel="icon" type="image/svg+xml" href="assets/icon.svg" />
-  <link rel="apple-touch-icon" href="assets/icon-180.png" />
+  <meta name="theme-color" content="#791b2b" />
+  <meta name="description" content="ROMAGNAGUESSER: esplora Cesena e dintorni, indovina il posto e sfida gli amici. Gioco geografico open source." />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="preconnect" href="https://api.panoramax.xyz" crossorigin />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/mapillary-js@4.1.2/dist/mapillary.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <title>ROMAGUESSR — La Romagna da indovinare</title>
+  <title>ROMAGNAGUESSER — La Romagna da indovinare</title>
   <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script defer src="https://unpkg.com/mapillary-js@4.1.2/dist/mapillary.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@panoramax/web-viewer@5.2.0/build/cjs/index_photoviewer.js"></script>
-  <script type="module" src="src/app.mjs"></script>
+  <script type="module" src="app.mjs"></script>
 </head>
 <body>
   <div class="app">
     <header class="topbar">
-      <a class="brand" href="./" aria-label="ROMAGUESSR, pagina principale"><span class="brand-mark">R<span class="brand-dot">.</span></span><span>ROMA<span class="brand-alt">GUESSR</span></span></a>
+      <a class="brand" href="./" aria-label="ROMAGNAGUESSER, pagina principale"><span class="brand-mark"><img src="icon.svg" alt="" /></span><span>ROMAGNA<span class="brand-alt">GUESSER</span></span></a>
       <span class="edition">CESENA EDITION <span class="live-dot"></span></span>
       <button id="settingsBtn" class="icon-button" aria-label="Impostazioni" title="Impostazioni">⚙</button>
     </header>
     <main>
       <section id="homeScreen" class="home-screen">
         <div class="hero">
-          <div class="eyebrow"><span class="eyebrow-line"></span> 100% OPEN SOURCE · ROMAGNA</div>
-          <h1>QUANTO CONOSCI<br /><span>LA TUA ZONA?</span></h1>
+          <div class="eyebrow"><span class="eyebrow-line"></span> LA ROMAGNA È CASA TUA? · CESENA EDITION</div>
+          <h1>QUANTO CONOSCI<br /><span>LA ROMAGNA?</span></h1>
           <p>Una strada sconosciuta. Un incrocio. Un cartello. <strong>Scopri dove sei</strong> tra Cesena e dintorni, poi piazza il pin sulla mappa.</p>
           <div class="hero-lower"><span class="area-tag"><span>◉</span> CESENA + 24 KM</span><span class="tiny-label">NESSUN ACCOUNT NECESSARIO</span></div>
-          <div class="route-graphic" aria-hidden="true"><span class="map-grid"></span><span class="ring ring-a"></span><span class="ring ring-b"></span><span class="route-line"></span><span class="pin-marker">R.</span><span class="coordinate">44°08' N / 12°14' E</span></div>
+          <div class="route-graphic" aria-hidden="true"><span class="map-grid"></span><span class="heraldic-ring"></span><img class="hero-crest" src="icon.svg" alt="" /><span class="crest-caption">TERRA DI ROMAGNA · MMXXVI</span><span class="coordinate">44°08' N / 12°14' E</span></div>
         </div>
         <div class="home-panel">
           <div id="challengeBanner" class="challenge-banner" hidden><span>↗</span><div><b>SFIDA RICEVUTA</b><small>Stesse posizioni, stesso terreno di gioco. Chi fa più punti?</small></div></div>
@@ -65,9 +68,9 @@
         <div class="game-footer"><div id="guessHelp" class="footer-hint">Un posto qualunque. Hai gli indizi davanti a te.</div><div class="game-actions"><button id="endBtn" class="secondary-button">ESCI</button><button id="shareBtn" class="secondary-button">↗ SFIDA AMICI</button><button id="guessBtn" class="primary-button compact" disabled>INDOVINA <span>→</span></button><button id="nextBtn" class="primary-button compact" hidden>PROSSIMO ROUND <span>→</span></button></div></div>
         <div id="resultStrip" class="result-strip" hidden><div><small>DISTANZA</small><strong id="distanceResult">—</strong></div><div><small>PUNTI GUADAGNATI</small><strong id="pointsResult">—</strong></div><div id="resultComment" class="result-comment">—</div><a id="sourceLink" class="source-link" href="https://api.panoramax.xyz" rel="noopener noreferrer" target="_blank">FONTE FOTO ↗</a></div>
       </section>
-      <section id="summaryScreen" class="summary-screen" hidden><div class="summary-content"><div class="eyebrow">PARTITA COMPLETATA · ROMAGUESSR</div><div class="summary-icon">◎</div><h1>NON MALE,<br /><span>ROMAGNOLO.</span></h1><div id="summaryTotal" class="summary-total">0</div><div id="summaryMax" class="summary-maximum">PUNTI SU 25.000</div><p id="summaryDetails">Hai completato la tua partita.</p><div class="summary-actions"><button id="againBtn" class="primary-button">GIOCA ANCORA <span>→</span></button><button id="shareScoreBtn" class="secondary-button">↗ CONDIVIDI PUNTEGGIO</button></div></div></section>
+      <section id="summaryScreen" class="summary-screen" hidden><div class="summary-content"><div class="eyebrow">PARTITA COMPLETATA · ROMAGNAGUESSER</div><div class="summary-icon"><img src="icon.svg" alt="" /></div><h1>NON MALE,<br /><span>ROMAGNOLO.</span></h1><div id="summaryTotal" class="summary-total">0</div><div id="summaryMax" class="summary-maximum">PUNTI SU 25.000</div><p id="summaryDetails">Hai completato la tua partita.</p><div class="summary-actions"><button id="againBtn" class="primary-button">GIOCA ANCORA <span>→</span></button><button id="shareScoreBtn" class="secondary-button">↗ CONDIVIDI PUNTEGGIO</button></div></div></section>
     </main>
-    <footer class="site-footer"><span>ROMAGUESSR · UN PROGETTO OPEN SOURCE</span><span>IMMAGINI DI TERZE PARTI · MAPPA © OSM / CARTO</span></footer>
+    <footer class="site-footer"><span>ROMAGNAGUESSER · UN PROGETTO OPEN SOURCE</span><span>IMMAGINI DI TERZE PARTI · MAPPA © OSM / CARTO</span></footer>
   </div>
   <dialog id="settingsDialog" class="settings-dialog"><form method="dialog"><div class="settings-title"><h2>Impostazioni</h2><button aria-label="Chiudi" class="icon-button">×</button></div><label for="mapillaryToken">Client access token Mapillary</label><input id="mapillaryToken" type="password" autocomplete="off" placeholder="Incolla il tuo token" /><p>Serve soltanto per usare Mapillary. Viene salvato esclusivamente nel browser di questo dispositivo; non inserirlo nella URL. Usa un token pubblico previsto per applicazioni client e leggi le condizioni di Mapillary.</p><label class="check-line"><input id="moveAllowed" type="checkbox" checked /> <span>Consenti movimento tra le fotografie</span></label><button id="saveSettings" type="button" class="primary-button">SALVA IMPOSTAZIONI</button><a href="https://www.mapillary.com/dashboard/developers" target="_blank" rel="noopener noreferrer" class="settings-link">Come ottenere il token ↗</a></form></dialog>
 </body>

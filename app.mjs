@@ -44,7 +44,7 @@ function ensureMap() {
     if (state.phase !== 'game' || state.locked) return;
     state.guess = { lat: e.latlng.lat, lng: e.latlng.lng };
     if (state.marker) state.marker.setLatLng(e.latlng);
-    else state.marker = L.marker(e.latlng, {icon: makeIcon('#bded56','?')}).addTo(state.map);
+    else state.marker = L.marker(e.latlng, {icon: makeIcon('#f0bc4b','?')}).addTo(state.map);
     $('guessBtn').disabled = false;
     $('pinIndicator').textContent = 'PIN PIAZZATO ✓';
     $('guessHelp').textContent = 'Hai scelto la posizione. Puoi spostare il pin.';
@@ -152,8 +152,8 @@ function submitGuess() {
   $('scoreLabel').textContent = numberIt(state.results.reduce((sum,x)=>sum+x.score,0));
   $('mapHeading').textContent = 'LA POSIZIONE CORRETTA';
   $('mapPanel').classList.add('is-result');
-  state.solution.push(L.marker([target.lat,target.lng],{icon:makeIcon('#68d9b7','✓')}).addTo(state.map));
-  state.solution.push(L.polyline([[state.guess.lat,state.guess.lng],[target.lat,target.lng]],{color:'#bded56',weight:3,dashArray:'7,8'}).addTo(state.map));
+  state.solution.push(L.marker([target.lat,target.lng],{icon:makeIcon('#a42a3d','✓')}).addTo(state.map));
+  state.solution.push(L.polyline([[state.guess.lat,state.guess.lng],[target.lat,target.lng]],{color:'#f0bc4b',weight:3,dashArray:'7,8'}).addTo(state.map));
   const bounds = L.latLngBounds([[state.guess.lat,state.guess.lng],[target.lat,target.lng]]).pad(.65);
   setTimeout(()=>{ state.map.invalidateSize(); state.map.fitBounds(bounds,{maxZoom:15,animate:true}); },110);
   no('guessBtn'); all('nextBtn','resultStrip');
@@ -203,13 +203,13 @@ function shareChallenge() {
   try {
     const encoded=createChallenge(state.rounds.slice(0,state.count));
     const link=`${location.origin}${location.pathname}?challenge=${encoded}`;
-    void copyOrShare(link,'Sfida ROMAGUESSR');
+    void copyOrShare(link,'Sfida ROMAGNAGUESSER');
   } catch(err) { alert(err.message); }
 }
 function shareScore() {
   const sum=state.results.reduce((s,r)=>s+r.score,0);
-  const msg=`Ho fatto ${numberIt(sum)} punti in ${state.results.length} round su ROMAGUESSR! Riesci a battermi? ${location.origin}${location.pathname}`;
-  void copyOrShare(msg,'Il mio punteggio ROMAGUESSR');
+  const msg=`Ho fatto ${numberIt(sum)} punti in ${state.results.length} round su ROMAGNAGUESSER! Riesci a battermi? ${location.origin}${location.pathname}`;
+  void copyOrShare(msg,'Il mio punteggio ROMAGNAGUESSER');
 }
 function resetHome() {
   removeViewer();

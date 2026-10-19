@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {haversineKm, scoreForDistance, CESENA, bboxForRadius, parsePanoramaxFeature, createChallenge, readChallenge, deriveStats, eligibleInRegion, parseCommonsPage} from '../src/core.mjs';
+import {haversineKm, scoreForDistance, CESENA, bboxForRadius, parsePanoramaxFeature, createChallenge, readChallenge, deriveStats, eligibleInRegion, parseCommonsPage} from './core.mjs';
 test('distance is zero for same point', () => assert.equal(haversineKm(CESENA,CESENA),0));
 test('distance to a second known point', () => assert.ok(haversineKm(CESENA,{lat:44.0678,lng:12.5695})>25));
 test('score decreases with distance and maxes at 5,000', () => {assert.equal(scoreForDistance(0),5000);assert.ok(scoreForDistance(1)>scoreForDistance(10));});

@@ -6,3 +6,123 @@
 
 /* Free geotagged stills are shown in full, without disguising them as 360° photography. */
 .commons-photo{display:block;width:100%;height:100%;object-fit:contain;background:#10151d;user-select:none;-webkit-user-drag:none}
+
+
+/* ==========================================================
+   ROMAGNAGUESSER / HERALDIC RED & GOLD — OCTOBER 2026
+   Palette inspired by traditional Romagna emblems, not an
+   official coat of arms. Original crest in icon.svg.
+   ========================================================== */
+:root {
+  font-family: "DM Sans",ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:#faeeda;background:#170e11;
+  --bg:#170e11;--panel:#2b141a;--line:#674336;--muted:#c29f88;
+  --accent:#f0bc4b;--accent2:#ffdb8c;--serif:#f9eac8;
+  --burgundy:#94263a;--ruby:#b23242;--gold:#f0bc4b;--cream:#fff0d7;
+}
+html,body{background:#170e11;color:#faeeda}
+h1,h2,.stat-number,.summary-total,.game-status strong {font-family:"Barlow Condensed","Arial Narrow",sans-serif;letter-spacing:.005em}
+h1{font-size:clamp(57px,7.2vw,116px);line-height:.88;font-weight:900;letter-spacing:-.015em}
+h2{font-size:35px;letter-spacing:0;font-weight:800}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #f7d78a;outline-offset:3px}
+.topbar{
+ background:#1b0d11;border-bottom:1px solid #7f3d34;
+ box-shadow:inset 0 -2px 0 #ddb35625;
+}
+.brand{font-size:18px;gap:12px;letter-spacing:.015em;font-weight:900}
+.brand-mark{width:47px;height:47px;background:none!important;box-shadow:0 0 0 1px #b98e4580;border-radius:12px;padding:2px;flex-shrink:0}
+.brand-mark img{width:100%;height:100%;object-fit:contain;display:block}
+.brand-alt{color:#f0bc4b}
+.edition{border:1px solid #875d40;color:#f0bc4b;background:#30161c;letter-spacing:.14em}
+.live-dot{background:#f0bc4b;box-shadow:0 0 0 4px #f0bc4b25}
+.icon-button{background:#381a22;color:#f4d89f;border-color:#7c4a3b}
+.home-screen{min-height:calc(100vh - 133px)}
+.hero{
+ background:radial-gradient(ellipse at 78% 71%,#84223496 0%,transparent 49%),
+ linear-gradient(145deg,#6e192b 0%,#4a1522 36%,#260e17 72%,#170e11 100%);
+ border-right:1px solid #a7704166;
+ min-height:620px;
+}
+.hero::before{content:"";position:absolute;inset:20px;border:1px solid #efc46732;pointer-events:none;z-index:1}
+.hero::after{content:"◆";position:absolute;top:9px;left:50%;font-size:16px;color:#f0bc4b80;z-index:1}
+.hero h1{position:relative;color:#fff0d7;text-shadow:0 8px 38px #25080d55}
+.hero h1 span{color:#f0bc4b}
+.hero p{color:#e9c9ba;max-width:505px;line-height:1.65}
+.hero p strong{color:#fff1d6}
+.eyebrow{color:#f0bc4b;letter-spacing:.16em}
+.eyebrow-line{background:#f0bc4b;width:34px}
+.area-tag{border:1px solid #ddab5688;color:#ffdfa0;background:#3b1b22;box-shadow:inset 0 0 0 1px #bd833d18}
+.tiny-label{color:#ca9f85}
+.route-graphic{position:absolute;inset:0;opacity:1;z-index:0;pointer-events:none}
+.map-grid{opacity:.65;background-image:linear-gradient(#ffd7800a 1px,transparent 1px),linear-gradient(90deg,#ffd7800a 1px,transparent 1px);background-size:42px 42px;transform:rotate(0deg) scale(1)}
+.hero-crest{position:absolute;right:-13%;bottom:-14%;width:min(67%,560px);height:auto;opacity:.27;filter:drop-shadow(0 0 20px #e9b65933) saturate(.8);transform:rotate(-13deg)}
+.heraldic-ring{position:absolute;right:-27%;bottom:-42%;height:640px;width:640px;border:1px solid #e8b85e30;border-radius:50%;box-shadow:0 0 0 31px #e8b85e04,0 0 0 32px #e8b85e27,0 0 0 89px #e8b85e03,0 0 0 90px #e8b85e20}
+.crest-caption{position:absolute;right:23px;bottom:66px;color:#ffd88b8a;font-size:10px;letter-spacing:.2em;font-weight:800}
+.coordinate{color:#e8ba8194}
+.home-panel{background:linear-gradient(147deg,#2a131b 0%,#1f1116 100%)}
+.section-label{color:#ca9b7c}
+.home-panel .section-label{color:#f0bc4b}
+.field-heading span{color:#f8e9cc}
+.field-heading small{color:#bc9885}
+.segmented{background:#160c10;border-color:#603c34}
+.segment{color:#c5a296}
+.segment.active{background:#7d2032;color:#ffdb89;box-shadow:inset 0 0 0 1px #d49a4a}
+.provider-name{border-color:#684034;background:#301923;color:#f6dfc1}
+.provider-name small{color:#d4a17d}
+.provider-option input:checked+.provider-name{border-color:#e3b653;background:#5a202b}
+.check-line{color:#e9d5c1}
+.check-line small{color:#bd9186}
+.primary-button{background:linear-gradient(110deg,#f6cb63,#e3a83a);color:#431b17;border-radius:8px;box-shadow:0 5px 0 #6b3518,0 15px 24px #13060955;font-weight:950}
+.primary-button:hover:not(:disabled){background:linear-gradient(110deg,#ffe193,#f4bf58);transform:translateY(-1px)}
+.secondary-button{border-color:#a47a51;background:#391b23;color:#ffe0a4;border-radius:8px}
+.secondary-button:hover{border-color:#f0bc4b;background:#5a2430}
+.stats-block{border-top-color:#6b3b33}
+.stats-block .section-label{color:#e4c096}
+.stats-block .section-label span{color:#a97d76}
+.stat-number{color:#f3c769;font-size:32px}
+.stats-grid small{color:#c19b88}
+.site-footer{background:#170e11;border-color:#5f332c;color:#ba8776}
+.challenge-banner{border-color:#be8a4a;background:#50242c}
+.challenge-banner b{color:#ffe3a3}
+.challenge-banner small{color:#dbbca4}
+.message-error{border-color:#d65b62;color:#ffe0d4;background:#5e1b2a}
+.game-screen{background:#1a0e12}
+.game-status .section-label{color:#e5b36b}
+.game-status strong{color:#ffecd7;font-size:25px}
+.game-status-right span{color:#bc9a87}
+.game-status-right strong{color:#f0bc4b;font-size:35px}
+.viewer-wrap{border:1px solid #ad734f;background:#190e13}
+.viewer-placeholder{color:#e0bc96}
+.photo-credit{background:#1e1016d6;color:#ffe9cf}
+.viewer-hint{background:#2a111bdb;color:#f1d5af}
+.map-panel{background:#29141b;border-color:#af7550;box-shadow:0 15px 45px #0b0408b8}
+.map-heading{border-bottom-color:#8c5240;color:#f7dcae}
+.map-expander{color:#ffd68c}
+.guess-map{background:#2b171a}
+.map-foot{color:#d7ab82}
+.footer-hint{color:#bb9786}
+.result-strip{background:#47232a;border-color:#b78c50}
+.result-strip small{color:#d3ae83}
+.result-strip strong{color:#f3c46b}
+.result-comment{color:#f6dcc0}
+.summary-screen{background:radial-gradient(ellipse at center,#722539 0%,#35141f 44%,#160c10 85%)}
+.summary-icon{height:120px;width:120px;border:1px solid #ddb75e;border-radius:25px;overflow:hidden;background:#361720;box-shadow:0 0 0 7px #f1bd431a,0 20px 60px #0c020756}
+.summary-icon img{width:100%;height:100%;object-fit:cover}
+.summary-screen .summary-total{color:#ffe0a1}
+.summary-maximum{color:#dfb894}
+.summary-screen p{color:#f0cdb1}
+.settings-dialog{background:#2c1720;color:#f9e3c6;border-color:#9e714f}
+.settings-dialog input[type=password]{background:#180d11;border-color:#9f6645;color:#fff0d8}
+.settings-dialog p{color:#d0aa94}
+.settings-link,.source-link{color:#f6cc76}
+.commons-photo{background:#1a0e12}
+@media(max-width:980px){.hero{min-height:440px}.hero-crest{right:0;bottom:-25%;width:52%;opacity:.17}.home-panel{border-top:1px solid #7c4236}}
+@media(max-width:600px){
+ .topbar{padding:10px 12px;gap:8px}.brand{font-size:13px;gap:7px;letter-spacing:-.015em}.brand-mark{height:36px;width:36px;border-radius:9px;padding:1px}
+ .edition{font-size:7px;letter-spacing:.06em;padding:6px}.icon-button{width:34px;height:34px}
+ .hero{min-height:440px;padding:48px 22px 54px}.hero::before{inset:11px}.hero h1{font-size:clamp(55px,14vw,78px);line-height:.88}
+ .hero p{font-size:13px;max-width:310px}.hero-crest{width:75%;right:-29%;bottom:-20%;opacity:.17}
+ .crest-caption{right:16px;bottom:46px;font-size:8px}
+ .home-panel{padding:37px 23px}.stat-number{font-size:28px}.game-status strong{font-size:22px}.game-status-right strong{font-size:29px}
+ .result-strip strong{font-size:22px}
+}
