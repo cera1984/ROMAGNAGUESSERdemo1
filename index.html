@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0e15" />
+  <meta name="description" content="ROMAGUESSR: esplora Cesena e dintorni, indovina il posto e sfida gli amici. Gioco geografico open source." />
+  <link rel="icon" type="image/svg+xml" href="assets/icon.svg" />
+  <link rel="apple-touch-icon" href="assets/icon-180.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="preconnect" href="https://api.panoramax.xyz" crossorigin />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/mapillary-js@4.1.2/dist/mapillary.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>ROMAGUESSR — La Romagna da indovinare</title>
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script defer src="https://unpkg.com/mapillary-js@4.1.2/dist/mapillary.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@panoramax/web-viewer@5.2.0/build/cjs/index_photoviewer.js"></script>
+  <script type="module" src="src/app.mjs"></script>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="ROMAGUESSR, pagina principale"><span class="brand-mark">R<span class="brand-dot">.</span></span><span>ROMA<span class="brand-alt">GUESSR</span></span></a>
+      <span class="edition">CESENA EDITION <span class="live-dot"></span></span>
+      <button id="settingsBtn" class="icon-button" aria-label="Impostazioni" title="Impostazioni">⚙</button>
+    </header>
+    <main>
+      <section id="homeScreen" class="home-screen">
+        <div class="hero">
+          <div class="eyebrow"><span class="eyebrow-line"></span> 100% OPEN SOURCE · ROMAGNA</div>
+          <h1>QUANTO CONOSCI<br /><span>LA TUA ZONA?</span></h1>
+          <p>Una strada sconosciuta. Un incrocio. Un cartello. <strong>Scopri dove sei</strong> tra Cesena e dintorni, poi piazza il pin sulla mappa.</p>
+          <div class="hero-lower"><span class="area-tag"><span>◉</span> CESENA + 24 KM</span><span class="tiny-label">NESSUN ACCOUNT NECESSARIO</span></div>
+          <div class="route-graphic" aria-hidden="true"><span class="map-grid"></span><span class="ring ring-a"></span><span class="ring ring-b"></span><span class="route-line"></span><span class="pin-marker">R.</span><span class="coordinate">44°08' N / 12°14' E</span></div>
+        </div>
+        <div class="home-panel">
+          <div id="challengeBanner" class="challenge-banner" hidden><span>↗</span><div><b>SFIDA RICEVUTA</b><small>Stesse posizioni, stesso terreno di gioco. Chi fa più punti?</small></div></div>
+          <div class="section-label">01 / PREPARA LA PARTITA</div>
+          <h2>Pronto a esplorare?</h2>
+          <div class="field-heading"><span>QUANTI ROUND?</span><small>5.000 punti per round</small></div>
+          <div id="roundOptions" class="segmented" role="group" aria-label="Numero di round">
+            <button class="segment active" data-rounds="5" aria-pressed="true">5 ROUND</button>
+            <button class="segment" data-rounds="10" aria-pressed="false">10 ROUND</button>
+            <button class="segment" data-rounds="infinite" aria-pressed="false">∞ INFINITI</button>
+          </div>
+          <div class="field-heading source-heading"><span>FONTE IMMAGINI</span><small>Fonti aperte; Mapillary richiede token</small></div>
+          <div class="provider-picker">
+            <label class="provider-option"><input type="radio" name="provider" value="pnx" checked /><span class="provider-name">◎ Panoramax + Commons <small>GRATIS</small></span></label>
+            <label class="provider-option"><input type="radio" name="provider" value="mly" /><span class="provider-name">◈ Mapillary <small>TOKEN</small></span></label>
+          </div>
+          <label class="check-line"><input id="only360" type="checkbox" /> <span>Parti solo da panorami a 360° <small>(potrebbero essercene pochi nella zona)</small></span></label>
+          <button id="startBtn" class="primary-button">INIZIA A GIOCARE <span>→</span></button>
+          <p id="homeError" class="message-error" role="alert" hidden></p>
+          <div class="stats-block"><div class="section-label">02 / LE TUE STATISTICHE <span>SOLO SU QUESTO DISPOSITIVO</span></div><div class="stats-grid">
+            <div><span id="statPlayed" class="stat-number">0</span><small>PARTITE</small></div><div><span id="statWinRate" class="stat-number">0%</span><small>VITTORIE</small></div><div><span id="statBest" class="stat-number">0</span><small>RECORD PUNTI</small></div><div><span id="statStreak" class="stat-number">0</span><small>SERIE</small></div>
+          </div></div>
+        </div>
+      </section>
+      <section id="gameScreen" class="game-screen" hidden>
+        <div class="game-status"><div><div class="section-label">CESENA EDITION</div><strong id="roundLabel">ROUND 01 / 05</strong></div><div class="game-status-right"><span>TOTALE PUNTI</span><strong id="scoreLabel">0</strong></div></div>
+        <div id="viewerWrap" class="viewer-wrap"><div id="photoHolder" class="photo-holder"><div class="viewer-placeholder"><span class="spinner"></span>Caricamento panoramica…</div></div><div id="photoCredit" class="photo-credit">Panoramax · OpenStreetMap</div><div class="viewer-hint">TRASCINA PER ESPLORARE · SE DISPONIBILE, USA LE FRECCE PER MUOVERTI</div>
+          <section id="mapPanel" class="map-panel" aria-label="Mappa su cui indovinare la posizione"><div class="map-heading"><span id="mapHeading">DOVE TI TROVI?</span><button id="expandMap" class="map-expander" aria-label="Espandi la mappa" title="Espandi o riduci la mappa">⤢</button></div><div id="guessMap" class="guess-map"></div><div class="map-foot"><span>TOCCA LA MAPPA PER PIAZZARE IL PIN</span><span id="pinIndicator">NESSUN PIN</span></div></section>
+        </div>
+        <div class="game-footer"><div id="guessHelp" class="footer-hint">Un posto qualunque. Hai gli indizi davanti a te.</div><div class="game-actions"><button id="endBtn" class="secondary-button">ESCI</button><button id="shareBtn" class="secondary-button">↗ SFIDA AMICI</button><button id="guessBtn" class="primary-button compact" disabled>INDOVINA <span>→</span></button><button id="nextBtn" class="primary-button compact" hidden>PROSSIMO ROUND <span>→</span></button></div></div>
+        <div id="resultStrip" class="result-strip" hidden><div><small>DISTANZA</small><strong id="distanceResult">—</strong></div><div><small>PUNTI GUADAGNATI</small><strong id="pointsResult">—</strong></div><div id="resultComment" class="result-comment">—</div><a id="sourceLink" class="source-link" href="https://api.panoramax.xyz" rel="noopener noreferrer" target="_blank">FONTE FOTO ↗</a></div>
+      </section>
+      <section id="summaryScreen" class="summary-screen" hidden><div class="summary-content"><div class="eyebrow">PARTITA COMPLETATA · ROMAGUESSR</div><div class="summary-icon">◎</div><h1>NON MALE,<br /><span>ROMAGNOLO.</span></h1><div id="summaryTotal" class="summary-total">0</div><div id="summaryMax" class="summary-maximum">PUNTI SU 25.000</div><p id="summaryDetails">Hai completato la tua partita.</p><div class="summary-actions"><button id="againBtn" class="primary-button">GIOCA ANCORA <span>→</span></button><button id="shareScoreBtn" class="secondary-button">↗ CONDIVIDI PUNTEGGIO</button></div></div></section>
+    </main>
+    <footer class="site-footer"><span>ROMAGUESSR · UN PROGETTO OPEN SOURCE</span><span>IMMAGINI DI TERZE PARTI · MAPPA © OSM / CARTO</span></footer>
+  </div>
+  <dialog id="settingsDialog" class="settings-dialog"><form method="dialog"><div class="settings-title"><h2>Impostazioni</h2><button aria-label="Chiudi" class="icon-button">×</button></div><label for="mapillaryToken">Client access token Mapillary</label><input id="mapillaryToken" type="password" autocomplete="off" placeholder="Incolla il tuo token" /><p>Serve soltanto per usare Mapillary. Viene salvato esclusivamente nel browser di questo dispositivo; non inserirlo nella URL. Usa un token pubblico previsto per applicazioni client e leggi le condizioni di Mapillary.</p><label class="check-line"><input id="moveAllowed" type="checkbox" checked /> <span>Consenti movimento tra le fotografie</span></label><button id="saveSettings" type="button" class="primary-button">SALVA IMPOSTAZIONI</button><a href="https://www.mapillary.com/dashboard/developers" target="_blank" rel="noopener noreferrer" class="settings-link">Come ottenere il token ↗</a></form></dialog>
+</body>
+</html>
