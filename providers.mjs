@@ -82,14 +82,127 @@ export async function discoverHybrid(needed, only360 = false) {
   return selected;
 }
 
-export async function discoverMapillary(needed, accessToken, only360 = false) {
-  if (!accessToken?.trim()) throw new Error('Per usare Mapillary inserisci un client access token nelle impostazioni. La modalità gratuita non richiede token.');
+// Mapillary's /images endpoint rejects large bbox requests (sometimes with HTTP 500).
+// Probe several small boxes well below even the original 0.001 square-degree limit.
+// The returned image coordinates are the real Mapillary coordinates; these probe
+// centers are NEVER used as answers to the game.
+const MAPILLARY_BOX_WIDTH = 0.026;
+const MAPILLARY_BOX_HEIGHT = 0.026;
+const MAPILLARY_LIMIT = 60;
+const MAPILLARY_BATCH_SIZE = 4;
+const MAPILLARY_MAX_REQUESTS = 32;
+
+export function mapillarySmallBbox(center) {
+  const dx = MAPILLARY_BOX_WIDTH / 2, dy = MAPILLARY_BOX_HEIGHT / 2;
+  return [center.lng - dx, center.lat - dy, center.lng + dx, center.lat + dy].map(n => +n.toFixed(6));
+}
+
+function mapillarySearchCenters() {
+  // Population centers and approaches within ~24 km of Cesena, followed by
+  // dispersed probes; randomize order to avoid always replaying identical roads.
+  const hubs = [
+    { lat: 44.1391, lng: 12.2431 }, // Cesena
+    { lat: 44.1580, lng: 12.2550 },
+    { lat: 44.1280, lng: 12.2190 },
+    { lat: 44.1430, lng: 12.2850 },
+    { lat: 44.1080, lng: 12.2510 },
+    { lat: 44.1880, lng: 12.1340 }, // Forlimpopoli area
+    { lat: 44.1480, lng: 12.1350 }, // Bertinoro area
+    { lat: 44.1780, lng: 12.3850 }, // Gambettola area
+    { lat: 44.0890, lng: 12.3970 }, // Savignano area
+    { lat: 44.2010, lng: 12.4000 }, // Cesenatico area
+    { lat: 44.0930, lng: 12.3320 },
+    { lat: 44.0920, lng: 12.2040 },
+    { lat: 44.1800, lng: 12.2980 },
+    { lat: 44.2290, lng: 12.3200 },
+    { lat: 44.0600, lng: 12.2550 },
+    { lat: 44.1700, lng: 12.1900 },
+  ];
+  const ring = [];
+  for (let i = 0; i < 24; i++) {
+    const theta = 2 * Math.PI * i / 24;
+    const radiusKm = [6.5, 12, 18][i % 3];
+    ring.push({
+      lat: CESENA.lat + radiusKm * Math.sin(theta) / 111.32,
+      lng: CESENA.lng + radiusKm * Math.cos(theta) / (111.32 * Math.cos(CESENA.lat * Math.PI / 180)),
+    });
+  }
+  return [hubs[0], ...shuffled(hubs.slice(1)), ...shuffled(ring)];
+}
+
+async function fetchMapillaryCell(center, accessToken) {
   const params = new URLSearchParams({
-    access_token: accessToken.trim(), bbox: bboxForRadius(CESENA, REGION_RADIUS_KM).join(','),
-    fields: 'id,computed_geometry,is_pano', limit: '2000',
+    access_token: accessToken,
+    bbox: mapillarySmallBbox(center).join(','),
+    fields: 'id,computed_geometry,is_pano',
+    limit: String(MAPILLARY_LIMIT),
   });
-  const json = await getJson(`${MAPILLARY_API}/images?${params}`);
-  return diverse((json.data || []).map(parseMapillaryFeature).filter(Boolean), needed, only360);
+  const url = `${MAPILLARY_API}/images?${params}`;
+  let lastError;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 16000);
+    try {
+      const res = await fetch(url, { mode: 'cors', signal: controller.signal });
+      if (!res.ok) {
+        const error = new Error(`Mapillary HTTP ${res.status}`);
+        error.status = res.status;
+        // Distinguish invalid/restricted tokens without exposing the token.
+        if (res.status === 401 || res.status === 403) {
+          error.auth = true;
+          throw error;
+        }
+        lastError = error;
+        if (![429, 500, 502, 503, 504].includes(res.status) || attempt === 1) throw error;
+      } else {
+        const json = await res.json();
+        if (!Array.isArray(json.data)) throw new Error('Risposta Mapillary senza elenco immagini.');
+        return json.data.map(parseMapillaryFeature).filter(Boolean);
+      }
+    } catch (error) {
+      if (error.auth) throw error;
+      lastError = error;
+      if (attempt === 1) throw error;
+    } finally {
+      clearTimeout(timer);
+    }
+    await new Promise(resolve => setTimeout(resolve, 350));
+  }
+  throw lastError || new Error('Mapillary non disponibile.');
+}
+
+export async function discoverMapillary(needed, accessToken, only360 = false) {
+  const token = accessToken?.trim();
+  if (!token) throw new Error('Per usare Mapillary inserisci il client access token nelle impostazioni.');
+  const centers = mapillarySearchCenters().slice(0, MAPILLARY_MAX_REQUESTS);
+  const found = [];
+  const errors = [];
+  let succeeded = 0;
+  for (let i = 0; i < centers.length; i += MAPILLARY_BATCH_SIZE) {
+    const batch = await Promise.allSettled(
+      centers.slice(i, i + MAPILLARY_BATCH_SIZE).map(center => fetchMapillaryCell(center, token))
+    );
+    for (const result of batch) {
+      if (result.status === 'fulfilled') {
+        succeeded++;
+        found.push(...result.value);
+      } else if (result.reason?.auth) {
+        throw new Error('Mapillary rifiuta il client access token (HTTP 401/403). Controlla l’attivazione dell’app su Mapillary e il token inserito.');
+      } else {
+        errors.push(result.reason);
+      }
+    }
+    const selected = diverse(found, needed, only360);
+    // Search at least two batches for a range of locations, not a single road.
+    if (selected.length >= needed && i >= MAPILLARY_BATCH_SIZE) return selected;
+  }
+  const result = diverse(found, needed, only360);
+  if (result.length >= needed) return result;
+  if (!succeeded && errors.length) {
+    const httpCode = errors.find(e => e?.status)?.status;
+    throw new Error(`Mapillary non risponde alle ricerche locali${httpCode ? ` (HTTP ${httpCode})` : ''}. Abbiamo già suddiviso la zona in riquadri piccoli; potrebbe essere un problema temporaneo dell’API. Riprova più tardi.`);
+  }
+  throw new Error(`Mapillary: trovate ${result.length} posizioni valide su ${needed}. ${only360 ? 'Disattiva «solo panorami a 360°» oppure ' : ''}Riprova o scegli Panoramax + Commons. ${errors.length ? `(${errors.length} ricerche locali non riuscite)` : ''}`);
 }
 
 export async function fetchChallenge(payload) {
